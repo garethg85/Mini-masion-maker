@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini Mansion Maker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>🏠 Mini Mansion Maker</h1>
+
+  <div class="controls">
+    <select id="blockType">
+      <option value="bedroom">Bedroom</option>
+      <option value="kitchen">Kitchen</option>
+      <option value="lounge">Lounge</option>
+      <option value="bathroom">Bathroom</option>
+      <option value="sofa">Sofa</option>
+      <option value="bed">Bed</option>
+      <option value="fridge">Fridge</option>
+      <option value="desk">Desk</option>
+      <option value="vault">Secret Vault 🕵️</option>
+      <!-- 🛋️ Luxury Living Pack -->
+      <option value="pool">Pool</option>
+      <option value="cinema">Home Cinema</option>
+      <option value="wine">Wine Cellar</option>
+    </select>
+    <button onclick="rotateBlock()">Rotate</button>
+    <button onclick="resetGrid()">Reset</button>
+    <button onclick="saveLayout()">Save</button>
+    <button onclick="loadLayout()">Load</button>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+  </div>
+
+  <div id="grid"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

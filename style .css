@@ -1,0 +1,58 @@
+body {
+  font-family: sans-serif;
+  background: #f0f0f0;
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+  transition: background 0.3s;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.controls {
+  margin-bottom: 20px;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(10, 60px);
+  grid-template-rows: repeat(8, 60px);
+  gap: 4px;
+  justify-content: center;
+  margin: auto;
+}
+
+.block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transform: rotate(0deg);
+  transition: transform 0.2s;
+}
+
+.bedroom { background: #7986cb; }
+.kitchen { background: #ffb74d; }
+.lounge  { background: #4db6ac; }
+.bathroom{ background: #90caf9; }
+.sofa    { background: #8d6e63; }
+.bed     { background: #f06292; }
+.fridge  { background: #b0bec5; }
+.desk    { background: #a1887f; }
+.vault   { background: #212121; }
+
+/* 🛋️ Luxury Living Pack */
+.pool    { background: #00bcd4; }
+.cinema  { background: #3e2723; }
+.wine    { background: #6d4c41; }
+
+.dark-mode {
+  background: #1e1e1e;
+  color: #eee;
+}
