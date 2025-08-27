@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+   import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 
 // Scene setup
@@ -24,22 +24,22 @@ directionalLight.position.set(10, 20, 10);
 scene.add(directionalLight);
 
 // Skybox
-scene.background = new THREE.Color(0x87CEEB);
+scene.background = new THREE.Color(0x37474F); // Dark mode default (darker blue-gray)
 
-// Block types and materials
+// Block types and materials (matched to style.css)
 const blockTypes = {
-  bedroom: new THREE.MeshStandardMaterial({ color: 0xFF9999 }), // Pink
-  kitchen: new THREE.MeshStandardMaterial({ color: 0xFFFF99 }), // Yellow
-  lounge: new THREE.MeshStandardMaterial({ color: 0x99FF99 }), // Green
-  bathroom: new THREE.MeshStandardMaterial({ color: 0x99CCFF }), // Blue
-  sofa: new THREE.MeshStandardMaterial({ color: 0xCC99FF }), // Purple
-  bed: new THREE.MeshStandardMaterial({ color: 0xFFCC99 }), // Peach
-  fridge: new THREE.MeshStandardMaterial({ color: 0xCCCCCC }), // Silver
-  desk: new THREE.MeshStandardMaterial({ color: 0x8B4513 }), // Brown
-  vault: new THREE.MeshStandardMaterial({ color: 0x444444 }), // Dark gray
-  pool: new THREE.MeshStandardMaterial({ color: 0x00FFFF }), // Cyan
-  cinema: new THREE.MeshStandardMaterial({ color: 0xFF4444 }), // Red
-  wine: new THREE.MeshStandardMaterial({ color: 0x800080 }) // Deep purple
+  bedroom: new THREE.MeshStandardMaterial({ color: 0x7986cb }), // #7986cb
+  kitchen: new THREE.MeshStandardMaterial({ color: 0xffb74d }), // #ffb74d
+  lounge: new THREE.MeshStandardMaterial({ color: 0x4db6ac }), // #4db6ac
+  bathroom: new THREE.MeshStandardMaterial({ color: 0x90caf9 }), // #90caf9
+  sofa: new THREE.MeshStandardMaterial({ color: 0x8d6e63 }), // #8d6e63
+  bed: new THREE.MeshStandardMaterial({ color: 0xf06292 }), // #f06292
+  fridge: new THREE.MeshStandardMaterial({ color: 0xb0bec5 }), // #b0bec5
+  desk: new THREE.MeshStandardMaterial({ color: 0xa1887f }), // #a1887f
+  vault: new THREE.MeshStandardMaterial({ color: 0x212121 }), // #212121
+  pool: new THREE.MeshStandardMaterial({ color: 0x00bcd4 }), // #00bcd4
+  cinema: new THREE.MeshStandardMaterial({ color: 0x3e2723 }), // #3e2723
+  wine: new THREE.MeshStandardMaterial({ color: 0x6d4c41 }) // #6d4c41
 };
 let currentBlockType = 'bedroom';
 let currentRotation = 0;
@@ -221,7 +221,8 @@ window.loadLayout = () => {
 
 window.toggleTheme = () => {
   document.body.classList.toggle('light-theme');
-  scene.background = new THREE.Color(document.body.classList.contains('light-theme') ? 0xF0F8FF : 0x87CEEB);
+  document.body.classList.toggle('dark-mode', !document.body.classList.contains('light-theme'));
+  scene.background = new THREE.Color(document.body.classList.contains('light-theme') ? 0xF0F8FF : 0x37474F);
 };
 
 window.placeBlockTouch = () => {
@@ -308,4 +309,4 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
+}); 
