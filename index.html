@@ -9,7 +9,7 @@
   <h1>🏠 Mini Mansion Maker</h1>
 
   <div class="controls">
-    <select id="blockType">
+    <select id="blockType" aria-label="Select block type">
       <option value="bedroom">Bedroom</option>
       <option value="kitchen">Kitchen</option>
       <option value="lounge">Lounge</option>
@@ -19,19 +19,18 @@
       <option value="fridge">Fridge</option>
       <option value="desk">Desk</option>
       <option value="vault">Secret Vault 🕵️</option>
-      <!-- 🛋️ Luxury Living Pack -->
       <option value="pool">Pool</option>
       <option value="cinema">Home Cinema</option>
       <option value="wine">Wine Cellar</option>
     </select>
-    <button onclick="rotateBlock()">Rotate</button>
-    <button onclick="resetGrid()">Reset</button>
-    <button onclick="saveLayout()">Save</button>
-    <button onclick="loadLayout()">Load</button>
-    <button onclick="toggleTheme()">Toggle Theme</button>
+    <button onclick="rotateBlock()" aria-label="Rotate selected block">Rotate</button>
+    <button onclick="resetGrid()" aria-label="Reset the mansion grid">Reset</button>
+    <button onclick="saveLayout()" aria-label="Save mansion layout">Save</button>
+    <button onclick="loadLayout()" aria-label="Load mansion layout">Load</button>
+    <button onclick="toggleTheme()" aria-label="Toggle light/dark theme">Toggle Theme</button>
   </div>
 
-  <div id="grid"></div>
+  <div id="grid" aria-label="Mansion grid container" role="grid"></div>
 
   <script src="script.js"></script>
 </body>
