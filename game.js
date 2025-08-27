@@ -1,25 +1,40 @@
-   import * as THREE from 'three';
+import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 
 // Scene setup
 const canvas = document.getElementById('gameCanvas');
+if (!canvas) {
+  console.error('Canvas element with id "gameCanvas" not found.');
+  alert('Error: Canvas element not found. Check HTML for <canvas id="gameCanvas">.');
+}
+
+// Initialize WebGL renderer
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+} catch (e) {
+  console.error('Failed to initialize WebGLRenderer:', e);
+  alert('WebGL initialization failed. Ensure your browser supports WebGL.');
+}
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas });
-renderer.setSize(window.innerWidth, window.innerHeight);
 
 // First-person controls
 const controls = new PointerLockControls(camera, canvas);
 scene.add(controls.getObject());
 canvas.addEventListener('click', () => controls.lock());
 
-// Camera position
-camera.position.set(0, 5, 10);
+// Camera position and orientation
+camera.position.set(0, 5, 0); // Start above the center of the grid
+camera.lookAt(new THREE.Vector3(0, 0, 0)); // Look toward the grid origin
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+const ambientLight = new THREE.AmbientLight(0x404040, 0.7); // Increased intensity
 scene.add(ambientLight);
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8); // Increased intensity
 directionalLight.position.set(10, 20, 10);
 scene.add(directionalLight);
 
@@ -28,18 +43,18 @@ scene.background = new THREE.Color(0x37474F); // Dark mode default (darker blue-
 
 // Block types and materials (matched to style.css)
 const blockTypes = {
-  bedroom: new THREE.MeshStandardMaterial({ color: 0x7986cb }), // #7986cb
-  kitchen: new THREE.MeshStandardMaterial({ color: 0xffb74d }), // #ffb74d
-  lounge: new THREE.MeshStandardMaterial({ color: 0x4db6ac }), // #4db6ac
-  bathroom: new THREE.MeshStandardMaterial({ color: 0x90caf9 }), // #90caf9
-  sofa: new THREE.MeshStandardMaterial({ color: 0x8d6e63 }), // #8d6e63
-  bed: new THREE.MeshStandardMaterial({ color: 0xf06292 }), // #f06292
-  fridge: new THREE.MeshStandardMaterial({ color: 0xb0bec5 }), // #b0bec5
-  desk: new THREE.MeshStandardMaterial({ color: 0xa1887f }), // #a1887f
-  vault: new THREE.MeshStandardMaterial({ color: 0x212121 }), // #212121
-  pool: new THREE.MeshStandardMaterial({ color: 0x00bcd4 }), // #00bcd4
-  cinema: new THREE.MeshStandardMaterial({ color: 0x3e2723 }), // #3e2723
-  wine: new THREE.MeshStandardMaterial({ color: 0x6d4c41 }) // #6d4c41
+  bedroom: new THREE.MeshStandardMaterial({ color: 0x7986cb }),
+  kitchen: new THREE.MeshStandardMaterial({ color: 0xffb74d }),
+  lounge: new THREE.MeshStandardMaterial({ color: 0x4db6ac }),
+  bathroom: new THREE.MeshStandardMaterial({ color: 0x90caf9 }),
+  sofa: new THREE.MeshStandardMaterial({ color: 0x8d6e63 }),
+  bed: new THREE.MeshStandardMaterial({ color: 0xf06292 }),
+  fridge: new THREE.MeshStandardMaterial({ color: 0xb0bec5 }),
+  desk: new THREE.MeshStandardMaterial({ color: 0xa1887f }),
+  vault: new THREE.MeshStandardMaterial({ color: 0x212121 }),
+  pool: new THREE.MeshStandardMaterial({ color: 0x00bcd4 }),
+  cinema: new THREE.MeshStandardMaterial({ color: 0x3e2723 }),
+  wine: new THREE.MeshStandardMaterial({ color: 0x6d4c41 })
 };
 let currentBlockType = 'bedroom';
 let currentRotation = 0;
@@ -57,12 +72,12 @@ const playerMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
 const playerMarker = new THREE.Mesh(playerGeometry, playerMaterial);
 scene.add(playerMarker);
 
-// Create ground (10x10 grid of lounge blocks)
+// Create ground (larger 20x20 grid of lounge blocks for better visibility and play area)
 function createGrid() {
   blocks.length = 0;
   scene.children = scene.children.filter(child => !child.userData.isBlock);
-  for (let x = -5; x < 5; x++) {
-    for (let z = -5; z < 5; z++) {
+  for (let x = -10; x < 10; x++) {
+    for (let z = -10; z < 10; z++) {
       const block = new THREE.Mesh(blockGeometry, blockTypes.lounge);
       block.position.set(x, 0, z);
       block.userData = { type: 'lounge', rotation: 0, isBlock: true };
@@ -109,20 +124,23 @@ canvas.addEventListener('mousedown', (e) => {
 
 // Touch controls
 const joystickCanvas = document.getElementById('joystick');
-const joystickCtx = joystickCanvas.getContext('2d');
+if (!joystickCanvas) {
+  console.warn('Joystick canvas not found. Touch controls may not work.');
+}
+const joystickCtx = joystickCanvas?.getContext('2d');
 const touchState = {
   joystick: { active: false, x: 0, y: 0, dx: 0, dy: 0 },
   place: { active: false },
   remove: { active: false }
 };
 const joystick = { outerRadius: 50, innerRadius: 20, x: 50, y: 50 };
-joystickCanvas.addEventListener('touchstart', (e) => {
+joystickCanvas?.addEventListener('touchstart', (e) => {
   e.preventDefault();
   const touches = e.changedTouches;
   for (let i = 0; i < touches.length; i++) {
     const touch = touches[i];
-    const touchX = touch.clientX - joystickCanvas.getBoundingClientRect().left;
-    const touchY = touch.clientY - joystickCanvas.getBoundingClientRect().top;
+    const touchX = touch.clientX - (joystickCanvas.getBoundingClientRect().left || 0);
+    const touchY = touch.clientY - (joystickCanvas.getBoundingClientRect().top || 0);
     if (touchX < window.innerWidth / 2) {
       touchState.joystick.active = true;
       touchState.joystick.x = touchX;
@@ -132,13 +150,13 @@ joystickCanvas.addEventListener('touchstart', (e) => {
     }
   }
 });
-joystickCanvas.addEventListener('touchmove', (e) => {
+joystickCanvas?.addEventListener('touchmove', (e) => {
   e.preventDefault();
   const touches = e.changedTouches;
   for (let i = 0; i < touches.length; i++) {
     const touch = touches[i];
-    const touchX = touch.clientX - joystickCanvas.getBoundingClientRect().left;
-    const touchY = touch.clientY - joystickCanvas.getBoundingClientRect().top;
+    const touchX = touch.clientX - (joystickCanvas.getBoundingClientRect().left || 0);
+    const touchY = touch.clientY - (joystickCanvas.getBoundingClientRect().top || 0);
     if (touchState.joystick.active) {
       touchState.joystick.x = touchX;
       touchState.joystick.y = touchY;
@@ -157,7 +175,7 @@ joystickCanvas.addEventListener('touchmove', (e) => {
     }
   }
 });
-joystickCanvas.addEventListener('touchend', (e) => {
+joystickCanvas?.addEventListener('touchend', (e) => {
   e.preventDefault();
   touchState.joystick.active = false;
   touchState.joystick.dx = 0;
@@ -168,7 +186,7 @@ joystickCanvas.addEventListener('touchend', (e) => {
 const velocity = new THREE.Vector3();
 const moveSpeed = 5;
 window.addEventListener('keydown', (e) => {
-  switch (e.key) {
+  switch (e.key.toLowerCase()) {
     case 'w': velocity.z = -moveSpeed; break;
     case 's': velocity.z = moveSpeed; break;
     case 'a': velocity.x = -moveSpeed; break;
@@ -177,7 +195,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 window.addEventListener('keyup', (e) => {
-  switch (e.key) {
+  switch (e.key.toLowerCase()) {
     case 'w': case 's': velocity.z = 0; break;
     case 'a': case 'd': velocity.x = 0; break;
     case ' ': velocity.y = 0; break;
@@ -280,16 +298,18 @@ function animate() {
   playerMarker.position.y -= 1;
 
   // Draw touch joystick
-  joystickCtx.clearRect(0, 0, joystickCanvas.width, joystickCanvas.height);
-  if (touchState.joystick.active) {
-    joystickCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-    joystickCtx.beginPath();
-    joystickCtx.arc(joystick.x, joystick.y, joystick.outerRadius, 0, Math.PI * 2);
-    joystickCtx.fill();
-    joystickCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-    joystickCtx.beginPath();
-    joystickCtx.arc(joystick.x + touchState.joystick.dx, joystick.y + touchState.joystick.dy, joystick.innerRadius, 0, Math.PI * 2);
-    joystickCtx.fill();
+  if (joystickCtx) {
+    joystickCtx.clearRect(0, 0, joystickCanvas.width, joystickCanvas.height);
+    if (touchState.joystick.active) {
+      joystickCtx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      joystickCtx.beginPath();
+      joystickCtx.arc(joystick.x, joystick.y, joystick.outerRadius, 0, Math.PI * 2);
+      joystickCtx.fill();
+      joystickCtx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      joystickCtx.beginPath();
+      joystickCtx.arc(joystick.x + touchState.joystick.dx, joystick.y + touchState.joystick.dy, joystick.innerRadius, 0, Math.PI * 2);
+      joystickCtx.fill();
+    }
   }
 
   // Move camera with joystick
@@ -309,4 +329,4 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-}); 
+});
