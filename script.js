@@ -69,3 +69,4 @@ function toggleTheme() {
 
 // Initialize grid when page loads
 createGrid();
+
