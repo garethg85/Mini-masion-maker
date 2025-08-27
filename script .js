@@ -10,7 +10,10 @@ function createGrid() {
     cell.style.width = "60px";
     cell.style.height = "60px";
     cell.style.background = "#ddd";
+    cell.tabIndex = 0;  // keyboard focus support
+    cell.setAttribute('role','gridcell');
     cell.onclick = () => placeBlock(cell);
+    cell.onkeypress = (e) => { if(e.key==='Enter' || e.key===' ') placeBlock(cell); };
     grid.appendChild(cell);
   }
 }
@@ -24,6 +27,7 @@ function placeBlock(cell) {
 
 function rotateBlock() {
   currentRotation = (currentRotation + 90) % 360;
+  alert(`Block rotation set to ${currentRotation}°`);
 }
 
 function resetGrid() {
@@ -46,16 +50,22 @@ function saveLayout() {
 
 function loadLayout() {
   const layout = JSON.parse(localStorage.getItem("mansionLayout"));
-  if (!layout) return;
+  if (!layout) {
+    alert("No saved layout found.");
+    return;
+  }
   grid.childNodes.forEach((cell, i) => {
     cell.className = layout[i].class;
     cell.textContent = layout[i].text;
     cell.style.transform = layout[i].rotation;
   });
+  alert("Layout loaded!");
 }
 
 function toggleTheme() {
-  document.body.classList.toggle("dark-mode");
+  darkMode = !darkMode;
+  document.body.classList.toggle("dark-mode", darkMode);
 }
 
+// Initialize grid when page loads
 createGrid();
